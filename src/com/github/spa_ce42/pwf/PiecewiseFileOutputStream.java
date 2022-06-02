@@ -42,14 +42,6 @@ public class PiecewiseFileOutputStream extends OutputStream {
         this.nextBufferedOutputStream();
     }
 
-    private void loggedWrite(byte[] b) throws IOException {
-        this.bos.write(b);
-    }
-
-    private void loggedWrite(byte[] b, int i, int j) throws IOException {
-        this.bos.write(b, i, j);
-    }
-
     @Override
     public void write(int b) throws IOException {
         this.bos.write(b);
@@ -60,7 +52,7 @@ public class PiecewiseFileOutputStream extends OutputStream {
         int futureSpaceLeft = this.spaceLeft - b.length;
 
         if(futureSpaceLeft > 0) {
-            loggedWrite(b);
+            this.bos.write(b);
             this.spaceLeft = futureSpaceLeft;
             return;
         }
@@ -71,13 +63,13 @@ public class PiecewiseFileOutputStream extends OutputStream {
             int delta = b.length - position;
 
             if(delta > this.spaceLeft) {
-                loggedWrite(b, position, this.spaceLeft);
+                this.bos.write(b, position, this.spaceLeft);
                 position = position + this.spaceLeft;
                 this.nextBufferedOutputStream();
                 continue;
             }
 
-            loggedWrite(b, position, delta);
+            this.bos.write(b, position, delta);
             position = position + delta;
             this.spaceLeft = this.spaceLeft - delta;
         }
