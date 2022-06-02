@@ -16,11 +16,10 @@ public class PiecewiseFileOutputStream extends OutputStream {
 
     private String intToStringSpecial(int i) {
         String s = String.valueOf(i);
-        int delta = this.numberLength - s.length();
+        int delta = Math.max(0, this.numberLength - s.length());
 
         if(delta != 0) {
             s = "0".repeat(delta) + s;
-            System.out.println(s);
         }
 
         return s;
@@ -38,7 +37,7 @@ public class PiecewiseFileOutputStream extends OutputStream {
 
     public PiecewiseFileOutputStream(File directory, File zip, int pieceSize) throws IOException {
         this.targetDirectory = directory;
-        this.numberLength = (int)Math.log10((double)zip.length() / (double)pieceSize) + 1;
+        this.numberLength = Math.max(0, (int)Math.log10((double)zip.length() / (double)pieceSize)) + 1;
         this.pieceSize = pieceSize;
         this.nextBufferedOutputStream();
     }

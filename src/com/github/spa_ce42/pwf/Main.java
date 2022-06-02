@@ -64,16 +64,16 @@ public class Main {
         String out = input("Please specify the output directory: ");
         File target = new File(out);
 
+        target.mkdirs();
+
         while(!isEmpty(target)) {
             out = input(System.err, "The directory specified is not empty, please try again: ");
             target = new File(out);
         }
 
-        boolean b = target.mkdirs();
-
-        if(!b) {
-            throw new IOException("Failed to make directory: " + target.getAbsolutePath());
-        }
+        PiecewiseFileInputStream is = new PiecewiseFileInputStream(piecewiseFilesDirectory, target);
+        is.write();
+        is.close();
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
@@ -125,11 +125,7 @@ public class Main {
         File g = new File(out);
 
         if(!g.exists()) {
-            boolean b = g.mkdirs();
-
-            if(!b) {
-                throw new IOException("Failed to make directory: " + g.getAbsolutePath());
-            }
+            g.mkdirs();
         }
 
         while(!g.isDirectory()) {
@@ -151,8 +147,16 @@ public class Main {
         BufferedInputStream zipReader = new BufferedInputStream(new FileInputStream(h));
         PiecewiseFileOutputStream o = new PiecewiseFileOutputStream(g, h, 8000000);
         byte[] buffer = new byte[8192];
+        int i;
 
-        while(zipReader.read(buffer) > 0) {
+        while((i = zipReader.read(buffer)) > 0) {
+            if(i < 8192) {
+                byte[] temp = new byte[i];
+                System.arraycopy(buffer, 0, temp, 0, i);
+                o.write(temp);
+                continue;
+            }
+
             o.write(buffer);
         }
 
@@ -179,3 +183,10 @@ public class Main {
         }
     }
 }
+
+/*
+W
+C:\Users\24feik\Downloads\test database for keming
+C:\Users\24feik\Downloads\test
+
+ */
