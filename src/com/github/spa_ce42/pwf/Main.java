@@ -37,10 +37,6 @@ public class Main {
         }
     }
 
-    private static void readPieceWiseFile() throws IOException {
-
-    }
-
     private static boolean isEmpty(File f) throws IOException {
         String[] s = f.list();
 
@@ -49,6 +45,35 @@ public class Main {
         }
 
         return s.length == 0;
+    }
+
+    private static void readPieceWiseFile() throws IOException {
+        String in = input("Please specify the abstract path to the piecewise files: ");
+        File piecewiseFilesDirectory = new File(in);
+
+        while(!piecewiseFilesDirectory.exists()) {
+            in = input(System.err, "The directory does not exist, please try again: ");
+            piecewiseFilesDirectory = new File(in);
+        }
+
+        while(!piecewiseFilesDirectory.isDirectory()) {
+            in = input(System.err, "The abstract path specified does not denote a directory. please try again: ");
+            piecewiseFilesDirectory = new File(in);
+        }
+
+        String out = input("Please specify the output directory: ");
+        File target = new File(out);
+
+        while(!isEmpty(target)) {
+            out = input(System.err, "The directory specified is not empty, please try again: ");
+            target = new File(out);
+        }
+
+        boolean b = target.mkdirs();
+
+        if(!b) {
+            throw new IOException("Failed to make directory: " + target.getAbsolutePath());
+        }
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
@@ -62,6 +87,7 @@ public class Main {
             } else {
                 zipOut.putNextEntry(new ZipEntry(fileName + "/"));
             }
+
             zipOut.closeEntry();
             File[] children = fileToZip.listFiles();
 
@@ -112,7 +138,7 @@ public class Main {
         }
 
         while(!isEmpty(g)) {
-            out = input(System.err, "The path specified is not empty, please try again: ");
+            out = input(System.err, "The directory specified is not empty, please try again: ");
             g = new File(out);
         }
 

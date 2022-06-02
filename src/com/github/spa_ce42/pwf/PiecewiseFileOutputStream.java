@@ -45,20 +45,10 @@ public class PiecewiseFileOutputStream extends OutputStream {
 
     private void loggedWrite(byte[] b) throws IOException {
         this.bos.write(b);
-
-        if(b.length != 8192) {
-            System.out.println(b.length + " bytes written");
-            System.out.println(this.fileId);
-        }
     }
 
     private void loggedWrite(byte[] b, int i, int j) throws IOException {
         this.bos.write(b, i, j);
-
-        if(i + j != 8192) {
-            System.out.println(i + j + " bytes written");
-            System.out.println(this.fileId);
-        }
     }
 
     @Override
