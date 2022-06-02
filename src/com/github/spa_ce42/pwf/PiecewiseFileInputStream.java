@@ -56,14 +56,7 @@ public class PiecewiseFileInputStream {
             byte[] buffer = new byte[8192];
             int i;
             while((i = bis.read(buffer)) > 0) {
-                if(i < 8192) {
-                    byte[] temp = new byte[i];
-                    System.arraycopy(buffer, 0, temp, 0, i);
-                    this.bos.write(temp);
-                    continue;
-                }
-
-                this.bos.write(buffer);
+                this.bos.write(buffer, 0, i);
             }
 
             bis.close();

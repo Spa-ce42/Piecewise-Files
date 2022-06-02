@@ -154,14 +154,7 @@ public class Main {
         int i;
 
         while((i = zipReader.read(buffer)) > 0) {
-            if(i < 8192) {
-                byte[] temp = new byte[i];
-                System.arraycopy(buffer, 0, temp, 0, i);
-                o.write(temp);
-                continue;
-            }
-
-            o.write(buffer);
+            o.write(buffer, 0, i);
         }
 
         zipReader.close();
