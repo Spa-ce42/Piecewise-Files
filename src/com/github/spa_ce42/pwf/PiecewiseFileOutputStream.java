@@ -9,10 +9,10 @@ import java.io.OutputStream;
 public class PiecewiseFileOutputStream extends OutputStream {
     private final File targetDirectory;
     private BufferedOutputStream bos;
-    private int fileId;
+    private int fileId = -1;
     private final int numberLength;
-    private final long pieceSize;
-    private long spaceLeft;
+    private final int pieceSize;
+    private int spaceLeft;
 
     private String intToStringSpecial(int i) {
         String s = String.valueOf(i);
@@ -20,6 +20,7 @@ public class PiecewiseFileOutputStream extends OutputStream {
 
         if(delta != 0) {
             s = "0".repeat(delta) + s;
+            System.out.println(s);
         }
 
         return s;
@@ -30,16 +31,34 @@ public class PiecewiseFileOutputStream extends OutputStream {
             this.bos.close();
         }
 
-        File h = new File(targetDirectory.getAbsolutePath() + File.separatorChar + this.intToStringSpecial(++this.fileId));
+        File h = new File(targetDirectory.getAbsolutePath() + File.separatorChar + this.intToStringSpecial(++this.fileId) + ".piece");
         this.bos = new BufferedOutputStream(new FileOutputStream(h));
         this.spaceLeft = this.pieceSize;
     }
 
-    public PiecewiseFileOutputStream(File directory, File zip, long pieceSize) throws IOException {
+    public PiecewiseFileOutputStream(File directory, File zip, int pieceSize) throws IOException {
         this.targetDirectory = directory;
         this.numberLength = (int)Math.log10((double)zip.length() / (double)pieceSize) + 1;
         this.pieceSize = pieceSize;
         this.nextBufferedOutputStream();
+    }
+
+    private void loggedWrite(byte[] b) throws IOException {
+        this.bos.write(b);
+
+        if(b.length != 8192) {
+            System.out.println(b.length + " bytes written");
+            System.out.println(this.fileId);
+        }
+    }
+
+    private void loggedWrite(byte[] b, int i, int j) throws IOException {
+        this.bos.write(b, i, j);
+
+        if(i + j != 8192) {
+            System.out.println(i + j + " bytes written");
+            System.out.println(this.fileId);
+        }
     }
 
     @Override
@@ -49,11 +68,39 @@ public class PiecewiseFileOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] b) throws IOException {
-        long futureSpaceLeft = this.spaceLeft - b.length;
+        int futureSpaceLeft = this.spaceLeft - b.length;
 
         if(futureSpaceLeft > 0) {
-            this.bos.write(b);
+            loggedWrite(b);
+            this.spaceLeft = futureSpaceLeft;
             return;
         }
+
+        int position = 0;
+
+        while(position < b.length) {
+            int delta = b.length - position;
+
+            if(delta > this.spaceLeft) {
+                loggedWrite(b, position, this.spaceLeft);
+                position = position + this.spaceLeft;
+                this.nextBufferedOutputStream();
+                continue;
+            }
+/*
+w
+D:\Minecraft Versions\Fabric\1.18.2\saves\shulkerfarmtutorial
+D:\Minecraft Versions\Fabric\1.18.2\saves\Compressed Piecewise Files
+
+ */
+            loggedWrite(b, position, delta);
+            position = position + delta;
+            this.spaceLeft = this.spaceLeft - delta;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.bos.close();
     }
 }

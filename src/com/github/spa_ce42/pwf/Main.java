@@ -52,10 +52,11 @@ public class Main {
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
-        if (fileToZip.isHidden()) {
+        if(fileToZip.isHidden()) {
             return;
         }
-        if (fileToZip.isDirectory()) {
+
+        if(fileToZip.isDirectory()) {
             if (fileName.endsWith("/")) {
                 zipOut.putNextEntry(new ZipEntry(fileName));
             } else {
@@ -63,19 +64,25 @@ public class Main {
             }
             zipOut.closeEntry();
             File[] children = fileToZip.listFiles();
+
+            assert children != null;
             for (File childFile : children) {
                 zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
             }
+
             return;
         }
+
         FileInputStream fis = new FileInputStream(fileToZip);
         ZipEntry zipEntry = new ZipEntry(fileName);
         zipOut.putNextEntry(zipEntry);
         byte[] bytes = new byte[1024];
         int length;
-        while ((length = fis.read(bytes)) >= 0) {
+
+        while((length = fis.read(bytes)) >= 0) {
             zipOut.write(bytes, 0, length);
         }
+
         fis.close();
     }
 
@@ -116,6 +123,15 @@ public class Main {
         zos.close();
 
         BufferedInputStream zipReader = new BufferedInputStream(new FileInputStream(h));
+        PiecewiseFileOutputStream o = new PiecewiseFileOutputStream(g, h, 8000000);
+        byte[] buffer = new byte[8192];
+
+        while(zipReader.read(buffer) > 0) {
+            o.write(buffer);
+        }
+
+        zipReader.close();
+        o.close();
     }
 
     public static void main(String[] args) {
