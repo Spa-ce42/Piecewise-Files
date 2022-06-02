@@ -15,7 +15,6 @@ import java.util.zip.ZipOutputStream;
 public class Main {
     private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private static final String SLS = System.lineSeparator();
-    private static final Character SC = File.separatorChar;
 
     private static String input(String prompt) {
         System.out.print(prompt);
@@ -142,7 +141,7 @@ public class Main {
             g = new File(out);
         }
 
-        File h = new File(g.getAbsolutePath() + SC + "temp.zip");
+        File h = new File(g.getAbsolutePath() + File.separatorChar + "temp.zip");
         h.deleteOnExit();
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(h));
         zipFile(f, f.getName(), zos);
