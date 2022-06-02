@@ -187,10 +187,3 @@ public class Main {
         }
     }
 }
-
-/*
-W
-C:\Users\24feik\Downloads\test database for keming
-C:\Users\24feik\Downloads\test
-
- */

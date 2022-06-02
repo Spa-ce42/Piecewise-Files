@@ -76,12 +76,7 @@ public class PiecewiseFileOutputStream extends OutputStream {
                 this.nextBufferedOutputStream();
                 continue;
             }
-/*
-w
-D:\Minecraft Versions\Fabric\1.18.2\saves\shulkerfarmtutorial
-D:\Minecraft Versions\Fabric\1.18.2\saves\Compressed Piecewise Files
 
- */
             loggedWrite(b, position, delta);
             position = position + delta;
             this.spaceLeft = this.spaceLeft - delta;
