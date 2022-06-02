@@ -9,9 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PiecewiseFileInputStream {
-    private File directory;
+    private final File directory;
     private int fileId;
-    private BufferedOutputStream bos;
+    private final BufferedOutputStream bos;
     private int numberLength;
 
     private String intToStringSpecial(int i) {
@@ -54,7 +54,7 @@ public class PiecewiseFileInputStream {
         while(this.hasNextPieceFile()) {
             BufferedInputStream bis = this.getNextPieceFileReader();
             byte[] buffer = new byte[8192];
-            int i = 0;
+            int i;
             while((i = bis.read(buffer)) > 0) {
                 if(i < 8192) {
                     byte[] temp = new byte[i];

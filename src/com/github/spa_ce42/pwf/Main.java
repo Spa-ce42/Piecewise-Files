@@ -27,6 +27,7 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static String input(PrintStream ps, String prompt) {
         ps.print(prompt);
 
@@ -37,6 +38,7 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isEmpty(File f) throws IOException {
         String[] s = f.list();
 
@@ -47,6 +49,7 @@ public class Main {
         return s.length == 0;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void readPieceWiseFile() throws IOException {
         String in = input("Please specify the abstract path to the piecewise files: ");
         File piecewiseFilesDirectory = new File(in);
@@ -112,6 +115,7 @@ public class Main {
         fis.close();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void writePieceWiseFile() throws IOException {
         String target = input("Please specify a target file/directory: ");
         File f = new File(target);
